@@ -86,6 +86,24 @@
             background: #fff9f4;
         }
 
+        tbody tr {
+            cursor: pointer;
+        }
+
+        .row-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            margin: -1rem -1.5rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .row-link:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: -2px;
+            border-radius: 4px;
+        }
+
         .stars {
             color: var(--accent);
             font-size: 1.05rem;
@@ -141,11 +159,12 @@
                         @foreach($feedbacks as $feedback)
                             @php
                                 $rating = max(0, min(5, (int) $feedback->lectures_value_rating));
+                                $detailUrl = route('feedback.show', ['feedbackid' => $feedback->id], false);
                             @endphp
                             <tr>
-                                <td>{{ $feedback->created_at?->format('d.m.Y H:i') }}</td>
+                                <td><a class="row-link" href="{{ $detailUrl }}">{{ $feedback->created_at?->format('d.m.Y H:i') }}</a></td>
                                 <td class="stars">
-                                    <span>{!! str_repeat('&#9733;', $rating) !!}</span><span class="empty">{!! str_repeat('&#9734;', 5 - $rating) !!}</span>
+                                    <a class="row-link" href="{{ $detailUrl }}"><span>{!! str_repeat('&#9733;', $rating) !!}</span><span class="empty">{!! str_repeat('&#9734;', 5 - $rating) !!}</span></a>
                                 </td>
                             </tr>
                         @endforeach

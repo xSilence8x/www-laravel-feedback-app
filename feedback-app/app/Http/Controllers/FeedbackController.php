@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedback;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FeedbackController extends Controller
 {
+    public function home(): View
+    {
+        return view('home');
+    }
+
     public function index(): View
     {
         $feedbacks = Feedback::query()
@@ -22,11 +26,13 @@ class FeedbackController extends Controller
         ]);
     }
 
-    public function show(int $feedbackid): JsonResponse
+    public function show(int $feedbackid): View
     {
         $feedback = Feedback::query()->findOrFail($feedbackid);
 
-        return response()->json($feedback);
+        return view('feedback.show', [
+            'feedback' => $feedback,
+        ]);
     }
 
     public function create(): View
@@ -54,7 +60,7 @@ class FeedbackController extends Controller
             'note' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        Feedback::query()->create([
+        $feedback = Feedback::query()->create([
             ...$validated,
             'knows_html' => $request->boolean('knows_html'),
             'knows_css' => $request->boolean('knows_css'),
@@ -65,7 +71,7 @@ class FeedbackController extends Controller
 
         $request->session()->flash('status', 'Dekujeme za zpetnou vazbu.');
 
-        return new RedirectResponse('/', 302, [
+        return new RedirectResponse('/feedback/'.$feedback->id, 302, [
             'Cache-Control' => 'no-store, no-cache, must-revalidate',
         ]);
     }
